@@ -22,6 +22,8 @@
 export bashtextbank_version="1.0.0"
 
 __env:tmpdir() {
+    command -v mkdir &> /dev/null || return 1 
+    command -v rm &> /dev/null || return 1
     case "${1}" in
         start)
             if [[ -n "${1}" ]] ; then
@@ -52,6 +54,10 @@ __env:tmpdir() {
 }
 
 __env:bank() {
+    command -v gzip &> /dev/null || return 1
+    command -v file &> /dev/null || return 1
+    command -v tar &> /dev/null || return 1
+    command -v cp &> /dev/null || return 1
     case "${1}" in
         open)
             local bank="${2}"
@@ -137,7 +143,7 @@ btb:create:table() {
         esac
     done 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}" 
             for i in ${tables[@]} ; do
@@ -199,7 +205,7 @@ btb:create:file() {
     done
 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-       __env:bank open "${bank}"
+       __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             for i in ${tables[@]} ; do
@@ -239,7 +245,7 @@ btb:remove:table() {
         esac
     done 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}" 
             for i in ${tables[@]} ; do
@@ -301,7 +307,7 @@ btb:remove:file() {
     done
 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-       __env:bank open "${bank}"
+       __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             for i in ${tables[@]} ; do
@@ -342,7 +348,7 @@ btb:check:table() {
     done
 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}" 
             for i in ${tables[@]} ; do
@@ -405,7 +411,7 @@ btb:check:file() {
     done
 
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-       __env:bank open "${bank}"
+       __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             for i in ${tables[@]} ; do
@@ -440,7 +446,7 @@ btb:list:table() {
         ;;
     esac
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank "open" "${bank}"
+        __env:bank "open" "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             ls -d *
@@ -450,6 +456,7 @@ btb:list:table() {
 }
 
 btb:list:file() {
+    command -v ls &> /dev/null || return 1
     local bank="" tables=()
     while [[ "${#}" -gt 0 ]] ; do
         case "${1}" in
@@ -465,7 +472,7 @@ btb:list:file() {
         esac
     done
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             for i in ${tables[@]} ; do
@@ -510,7 +517,7 @@ btb:write:file() {
         esac
     done
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             if [[ -d "${table}" ]] && [[ -n "${file}" ]] ; then
@@ -526,6 +533,7 @@ btb:write:file() {
 }
 
 btb:print:file() {
+    command -v cat &> /dev/null || return 1
     local bank="" table="" file=""
     while [[ "${#}" -gt 0 ]] ; do
         case "${1}" in
@@ -550,7 +558,7 @@ btb:print:file() {
         esac
     done
     if file "${bank}" | grep -w "gzip compressed data" &> /dev/null ; then
-        __env:bank open "${bank}"
+        __env:bank open "${bank}" || return "$?"
         (
             cd "${tmpdir}"
             if [[ -d "${table}" ]] ; then
