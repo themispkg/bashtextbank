@@ -86,6 +86,7 @@ check() {
 
     if [[ -n "${trigger}" ]] ; then
         for i in ${trigger[@]} ; do
+            cd "${CWD}"
             if ! command -v "${i}" &> /dev/null ; then
                 echo -e "\t'${i}' not found, trying to get it with using alternatives.."
                 alternatives "${i}" || export status="false"
