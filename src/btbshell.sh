@@ -26,6 +26,9 @@ __init:btb:shell() {
                 while true ; do
                     read -p "BashTextBank/CreateBank:[${bashtextbank_version}]> " subinput
                     case "${subinput}" in
+                        [bB][aA][cC][kK])
+                            break
+                        ;;
                         [eE][xX][iI][tT])
                             echo "See yea later (^-^)"
                             exit 0
