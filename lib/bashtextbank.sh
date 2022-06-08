@@ -497,7 +497,7 @@ btb:write:file() {
                 local bank="${1}"
                 shift 
             ;;
-            --table)
+            --table|-t)
                 shift
                 local table="${1}"
                 shift
@@ -509,7 +509,18 @@ btb:write:file() {
             ;;
             --data|-d)
                 shift
-                local data="${1}"
+                local data=()
+                while [[ "${#}" -gt 0 ]] ; do
+                    case "${1}" in
+                        --bank|--table|--file|-b|-t|-f)
+                            break
+                        ;;
+                        *)
+                            local data+=("${1} ")
+                            shift
+                        ;;
+                    esac
+                done
             ;;
             *)
                 shift
@@ -522,7 +533,7 @@ btb:write:file() {
             cd "${tmpdir}"
             if [[ -d "${table}" ]] && [[ -n "${file}" ]] ; then
                 cd "${table}"
-                echo "${data}" > "${file}"
+                echo "${data[@]}" > "${file}"
             else
                 __env:bank close
                 return 2
