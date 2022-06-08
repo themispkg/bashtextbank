@@ -13,7 +13,14 @@ alternatives() {
                 if [[ ! -d "${project##*/}" ]] ; then
                     git clone "${project}" && cd "${project##*/}" || return 1
                 fi
-                sudo make install || local status="false"                        
+                if [[ "${UID}" = "0" ]] ; then 
+                    make install || local status="false"                        
+                elif [[ "${UID}" != "0" ]] && command -v "sudo" &> /dev/null ; then
+                    sudo make install || local status="false"
+                else
+                    echo "please run it as root privalages this script."
+                    return 1
+                fi
                 shift
             ;;
             *)
