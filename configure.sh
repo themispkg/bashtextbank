@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export status="true" exist=() trigger=() 
+export CWD="${PWD}" status="true" exist=() trigger=()
 
 alternatives() {
     local status="true"
@@ -99,7 +99,10 @@ check() {
     fi
 }
 
-create:makefile() {
+check -e "src/btbshell.sh" "lib/bashtextbank.sh" -t "make" "gzip" "tar" "mkdir" "rm" "cp" "file" "grep" "delphi"
+
+if [[ "${status}" = "true" ]] ; then
+    cd "${CWD}"
     tabs 8
     t="$(printf '\t')"
 
@@ -127,12 +130,6 @@ reinstall:
 ${t}\$(remove)
 ${t}\$(setup)
 EOF
-}
-
-check -e "src/btbshell.sh" "lib/bashtextbank.sh" -t "make" "gzip" "tar" "mkdir" "rm" "cp" "file" "grep" "delphi"
-
-if [[ "${status}" = "true" ]] ; then
-    create:makefile
     [[ -f "Makefile" ]] && echo "All good, now you can type 'sudo make install'" ||  echo "Please reconfigure the project."
 else
     echo "Cannot create file 'Makefile' because requirements are not met."
