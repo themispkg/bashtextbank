@@ -10,7 +10,9 @@ alternatives() {
                 local project="https://github.com/themispkg/bash-utils"
                 command -v "git" &> /dev/null || return 1
                 command -v "make" &> /dev/null || return 1
-                git clone "${project}" && cd "${project##*/}" || return 1
+                if [[ ! -d "${project##*/}" ]] ; then
+                    git clone "${project}" && cd "${project##*/}" || return 1
+                fi
                 sudo make install || local status="false"                        
                 shift
             ;;
