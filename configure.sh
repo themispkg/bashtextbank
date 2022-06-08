@@ -11,8 +11,9 @@ alternatives() {
                 command -v "git" &> /dev/null || return 1
                 command -v "make" &> /dev/null || return 1
                 if [[ ! -d "${project##*/}" ]] ; then
-                    git clone "${project}" && cd "${project##*/}" || return 1
+                    git clone "${project}" || return 1
                 fi
+                cd "${project##*/}" || return 1
                 if [[ "${UID}" = "0" ]] ; then 
                     make install || local status="false"                        
                 elif [[ "${UID}" != "0" ]] && command -v "sudo" &> /dev/null ; then
