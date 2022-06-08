@@ -99,13 +99,11 @@ check() {
     fi
 }
 
-check -e "src/btbshell.sh" "lib/bashtextbank.sh" -t "make" "gzip" "tar" "mkdir" "rm" "cp" "file" "grep" "delphi" "tee"
-
-if [[ "${status}" = "true" ]] ; then
+create:makefile() {
     tabs 8
     t="$(printf '\t')"
 
-    tee "Makefile" <<EOF
+    cat - > "Makefile" <<EOF
 PREFIX	:= ""
 BINDIR	:= \$(PREFIX)/usr/bin
 LIBDIR	:= "/usr/local/lib/bash"
@@ -129,7 +127,12 @@ reinstall:
 ${t}\$(remove)
 ${t}\$(setup)
 EOF
+}
 
+check -e "src/btbshell.sh" "lib/bashtextbank.sh" -t "make" "gzip" "tar" "mkdir" "rm" "cp" "file" "grep" "delphi"
+
+if [[ "${status}" = "true" ]] ; then
+    create:makefile
     [[ -f "Makefile" ]] && echo "All good, now you can type 'sudo make install'" ||  echo "Please reconfigure the project."
 else
     echo "Cannot create file 'Makefile' because requirements are not met."
